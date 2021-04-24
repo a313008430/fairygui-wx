@@ -96,8 +96,36 @@ export class ByteBuffer {
         if (len == undefined) len = this.readUshort();
         this.validate(len);
 
-        let decoder = new TextDecoder();
-        let ret: string = decoder.decode(new DataView(this._buffer, this._view.byteOffset + this._pos, len));
+       
+       
+        let array:any = new Uint8Array(this._buffer, this._view.byteOffset + this._pos, len);
+        let ret: string = "";
+     
+        if(typeof TextDecoder !== 'undefined'){
+            let decoder = new TextDecoder();
+            ret = decoder.decode(array)
+        }else{
+            let s = '';
+
+            // array = array.buffer
+            for ( let i = 0, il = array.length; i < il; i ++ ) {
+                // Implicitly assumes little-endian.
+                s += String.fromCharCode( array[ i ] );
+            }
+
+            try {
+
+                // merges multi-byte utf-8 characters.
+
+                ret = decodeURIComponent( escape( s ) );
+
+            } catch ( e ) { // see #16358
+
+                ret = s;
+
+            }
+        }
+        
         this._pos += len;
 
         return ret;

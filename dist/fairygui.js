@@ -1,8 +1,6 @@
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('three')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'three'], factory) :
-    (global = global || self, factory(global.fgui = global.fgui || {}, global.three));
-}(this, (function (exports, three) { 'use strict';
+this.window = this.window || {};
+(function (exports, three) {
+    'use strict';
 
     (function (ButtonMode) {
         ButtonMode[ButtonMode["Common"] = 0] = "Common";
@@ -1511,7 +1509,7 @@
             pt = this._obj3D.worldToLocal(pt);
             if (pt.z != 0) {
                 s_dir.copy(direction || s_forward);
-                s_dir.applyQuaternion(this._obj3D.getWorldQuaternion(s_quaternion).inverse()).normalize();
+                s_dir.applyQuaternion(this._obj3D.getWorldQuaternion(s_quaternion).invert()).normalize();
                 let distOnLine = -pt.dot(s_forward) / s_dir.dot(s_forward);
                 pt.add(s_dir.multiplyScalar(distOnLine));
             }
@@ -7663,8 +7661,27 @@
             if (len == undefined)
                 len = this.readUshort();
             this.validate(len);
-            let decoder = new TextDecoder();
-            let ret = decoder.decode(new DataView(this._buffer, this._view.byteOffset + this._pos, len));
+            let array = new Uint8Array(this._buffer, this._view.byteOffset + this._pos, len);
+            let ret = "";
+            if (typeof TextDecoder !== 'undefined') {
+                let decoder = new TextDecoder();
+                ret = decoder.decode(array);
+            }
+            else {
+                let s = '';
+                // array = array.buffer
+                for (let i = 0, il = array.length; i < il; i++) {
+                    // Implicitly assumes little-endian.
+                    s += String.fromCharCode(array[i]);
+                }
+                try {
+                    // merges multi-byte utf-8 characters.
+                    ret = decodeURIComponent(escape(s));
+                }
+                catch (e) { // see #16358
+                    ret = s;
+                }
+            }
             this._pos += len;
             return ret;
         }
@@ -15376,7 +15393,8 @@
             this.localToGlobal(0, 0, s_pos);
             this.localToGlobal(1, 1, s_scale);
             s_scale.sub(s_pos);
-            s_mat$1.getInverse(Stage.canvasTransform);
+            // s_mat.getInverse(Stage.canvasTransform);
+            // Stage.canvasTransform.invert()
             s_tmp.set(s_pos.x, s_pos.y, 0);
             s_tmp.applyMatrix4(s_mat$1);
             s_pos.set(s_tmp.x, s_tmp.y);
@@ -21073,6 +21091,4 @@
     exports.lerp = lerp;
     exports.repeat = repeat;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
+}(this.window.fgui = this.window.fgui || {}, THREE));

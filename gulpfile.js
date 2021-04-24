@@ -24,10 +24,10 @@ gulp.task("rollup", async function () {
         onwarn : onwarn,
         output: {
             file: 'dist/fairygui.js',
-            format: 'umd',
+            format: 'iife',
             extend: true,
-            name: 'fgui',
-            globals: { three: 'three' }
+            name: 'window.fgui',
+            globals: { three: 'THREE' }
         }
     };
     const subTask = await rollup.rollup(config);
