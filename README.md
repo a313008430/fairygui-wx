@@ -1,10 +1,12 @@
 # FairyGUI-three
 
-#### A GUI Editor&amp;framework for Three.js ####
+#### 测试代码可能 有错，坑自己踩吧
+
+#### A GUI Editor&amp;framework for Three.js
 
 Official website: [www.fairygui.com](https://www.fairygui.com)
 
-### Usage ###
+### Usage
 
 Step 1, we use the editor to create the UI.
 
@@ -23,24 +25,23 @@ init();
 animate();
 
 function init() {
-    //THREE initialization code here
+  //THREE initialization code here
 
-    fgui.Stage.init(renderer, { screenMode:'horizontal' });  //screenMode is optional if you dont want to rotate the screen 
-    fgui.Stage.scene = scene;
+  fgui.Stage.init(renderer, { screenMode: "horizontal" }); //screenMode is optional if you dont want to rotate the screen
+  fgui.Stage.scene = scene;
 
-    fgui.UIPackage.loadPackage('path/to/UI').then(()=> {
-        view = fgui.UIPackage.CreateObject('Basics', 'Main');
-        view.makeFullScreen();
-        fgui.GRoot.inst.addChild(view);
-    });
+  fgui.UIPackage.loadPackage("path/to/UI").then(() => {
+    view = fgui.UIPackage.createObject("Basics", "Main").asCom;
+    view.makeFullScreen();
+    fgui.GRoot.inst.addChild(view);
+  });
 }
 
 function animate() {
+  requestAnimationFrame(animate);
 
-    requestAnimationFrame( animate );
-
-    fgui.Stage.update();
-    renderer.render(scene, fgui.Stage.camera);
+  fgui.Stage.update();
+  renderer.render(scene, fgui.Stage.camera);
 }
 ```
 
@@ -60,32 +61,31 @@ init();
 animate();
 
 function init() {
-    //THREE initialization code here
+  //THREE initialization code here
 
-    camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-	camera.position.z = 1;
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+  camera.position.z = 1;
 
-    fgui.Stage.init(renderer);
-    fgui.Stage.scene = scene;
+  fgui.Stage.init(renderer);
+  fgui.Stage.scene = scene;
 
-    fgui.UIPackage.loadPackage('path/to/UI').then(()=> {
-        view = fgui.UIPackage.CreateObject('3DInventory', 'Main');
-        view.displayObject.camera = camera;
-        view.displayObject.setLayer(0);
+  fgui.UIPackage.loadPackage("path/to/UI").then(() => {
+    view = fgui.UIPackage.createObject("3DInventory", "Main").asCom;
+    view.displayObject.camera = camera;
+    view.displayObject.setLayer(0);
 
-        let container = new Group();
-        container.scale.set(0.5, 0.5, 0.5);
-        container.add(view.obj3D);
-        scene.add(container);
-    });
+    let container = new Group();
+    container.scale.set(0.5, 0.5, 0.5);
+    container.add(view.obj3D);
+    scene.add(container);
+  });
 }
 
 function animate() {
+  requestAnimationFrame(animate);
 
-    requestAnimationFrame( animate );
-
-    fgui.Stage.update();
-    renderer.render(scene, camera);
+  fgui.Stage.update();
+  renderer.render(scene, camera);
 }
 ```
 
@@ -94,9 +94,10 @@ You should see [this](https://fairygui.com/threejs-demo/3d/)
 If a perspective camera is using for all UI,
 
 ```javascript
-    Stage.init(renderer, { defaultLayer:0 });
-    Stage.camera = yourCamera;
+Stage.init(renderer, { defaultLayer: 0 });
+Stage.camera = yourCamera;
 ```
 
 # License
+
 MIT
